@@ -4,12 +4,16 @@ const app = express();
 
 // connectDB
 const connectDB = require('./db/connect');
+// Routes
+const userRouter = require('./routes/userRoutes')
 
 app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('Welcome to my social media app API')
 })
+
+app.use('/api/v1/', userRouter);
 
 
 // Spinning up Server and Database
