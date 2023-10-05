@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 
 const registerUser = async (req, res) => {
     try {
-        const { name, username, email, password } = req.body;
+        const { name, username, email, password, profilePicture, bio } = req.body;
         const user = await User.findOne({ email: email, username: username });
         if (user) {
             res.status(400).json({ error: "User already exists" });
@@ -16,7 +16,9 @@ const registerUser = async (req, res) => {
             name,
             username,
             email,
-            password: hashedPWD,            
+            password: hashedPWD,
+            profilePicture,
+            bio,          
         })
         await newUser.save();
         const token = newUser.createJWT();
@@ -57,13 +59,24 @@ const loginUser = async (req, res) => {
             name: user.name,
             username: user.username,
             email: user.email,
-            bio: user.bio,
             profilePicture: user.profilePicture,
+            bio: user.bio,
          })
     } catch (err) {
         res.status(500).json({Err: err.message});
-        console.log("Error in Loggin in:", err.message);
+        console.log("Error in Logging in:", err.message);
     }
 };
 
-module.exports = { registerUser, loginUser }
+const logoutUser = async (req, res) => {
+    try {
+        res.cookie("jwt", "", {maxAge: 1});
+        res.status(200).json({ message: "You are now logged out!" });
+    } catch (err) {
+        res.status(500).json({Err: err.message});
+        console.log("Error in Logging  out:", err.message);
+    }
+};
+
+
+module.exports = { registerUser, loginUser, logoutUser }
