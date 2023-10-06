@@ -3,13 +3,14 @@ const jwt = require('jsonwebtoken');
 
 const authorize = async (req, res, next) => {
     try {
-        const token = req.cookies.jwt;
+        const token = req.headers.cookie.split('=')[1];
+        
         if (!token) {
-            return res.status(401).json({ message: Unauthorized })
+            return res.status(401).json({ message: "Unauthorized, no JWT token" })
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findOne(decoded.userId).select("-password");
+        const user = await User.findById(decoded.userId).select("-password");
         req.user = user;
         next();
     } catch (err) {

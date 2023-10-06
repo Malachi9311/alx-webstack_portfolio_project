@@ -21,13 +21,9 @@ const registerUser = async (req, res) => {
             bio,          
         })
         await newUser.save();
-        const token = newUser.createJWT();
+        // const token = newUser.createJWT();
 
-        res.status(201).json({User: newUser, Token: token});
-
-        console.log(newUser.username);
-        console.log(newUser.password)
-        console.log(token);
+        res.status(201).json(newUser)
     } catch (err) {
         res.status(500).json({Error: err.message});
         console.log("Error in Registration:", err.message);
