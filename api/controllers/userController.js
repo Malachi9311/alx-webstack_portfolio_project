@@ -23,7 +23,8 @@ const registerUser = async (req, res) => {
         await newUser.save();
         // const token = newUser.createJWT();
 
-        res.status(201).json(newUser)
+        const displayUser = { username: newUser.username, email: newUser.email };
+        res.status(201).json(displayUser)
     } catch (err) {
         res.status(500).json({Error: err.message});
         console.log("Error in Registration:", err.message);
@@ -39,7 +40,6 @@ const loginUser = async (req, res) => {
         };
 
         const isCorrectUser = await bcrypt.compare(password, user?.password || "")
-        console.log(isCorrectUser);
         if ( !isCorrectUser ) {
             return res.status(400).json({Err: "Invalid password"});
         };

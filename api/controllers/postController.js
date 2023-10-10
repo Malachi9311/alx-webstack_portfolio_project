@@ -31,7 +31,8 @@ const createPost = async (req, res) => {
 const feed = async (req, res) => {
     // Get a feed of all the latest posts
     try {
-        const posts = await Post.find().sort({ createdAt: -1 })
+        const posts = await Post.find().sort({ createdAt: -1 });
+        if (!posts) return res.status(404).json({posts: "There are no posts yet..."})
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -44,6 +45,7 @@ const getPost = async (req, res) => {
     try {
         const { id } = req.params;
         const post = await Post.findById(id);
+        if (!post) return res.status(401).json({ message: `Couldn't find post with id: ${id}` });
         res.status(200).json(post)
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -52,6 +54,7 @@ const getPost = async (req, res) => {
 };
 
 const getUserPosts = async (req, res) => {
+    // Get a users posts
     try {
         const { username } = req.params;
         const user = await User.findOne({username});
@@ -67,11 +70,15 @@ const getUserPosts = async (req, res) => {
 };
 
 const updatePost = async (req, res) => {
-    // Update post, still need to validate though
+    // Update post
     try {
         const { id } = req.params;
         const post = await Post.findById(id);
-        if (!post) return res.status(404).json({ error: "Post not found"})
+        if (!post) return res.status(404).json({ error: "Post not found"});
+        if (req.user._id.toString() !== post.postedBy.toString()) {
+            return res.status(404).json({ error: "Unauthorized to update." });
+        }
+
         const { text } = req.body;
         post.text = text;
         await post.save();
@@ -83,10 +90,16 @@ const updatePost = async (req, res) => {
 };
 
 const deletePost = async (req, res) => {
+    // Delete post
     try {
         const { id } = req.params;
         const post = await Post.findById(id);
-        if (!post) return res.status(404).json({ error: "Post not found"})
+        // console.log(post.postedBy.toString());
+        // console.log(req.user._id.toString());
+        if (!post) return res.status(404).json({ error: "Post not found"});
+        if (req.user._id.toString() !== post.postedBy.toString()) {
+            return res.status(404).json({ error: "Unauthorized to delete." });
+        }
         
         await Post.findByIdAndDelete(id);
         res.status(200).json({ Successful: `Post ${id} deleted successfully`})
