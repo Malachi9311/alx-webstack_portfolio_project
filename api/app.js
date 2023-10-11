@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/v1/', userRouter);
-app.use('/api/v1/', authorize, upload.single("picture"), postRouter);
+app.use('/api/v1/', authorize, postRouter);
 
 
 // Spinning up Server and Database
