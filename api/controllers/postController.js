@@ -189,10 +189,10 @@ const updateComment = async (req, res) => {
                 comObject = commentOwner[i];
             }
         }
-        console.log("============")
-        console.log(comObject);
-        console.log(`post owner: ${post.postedBy}`);
-        console.log(`logged in client: ${userId}`);
+        // console.log("============")
+        // console.log(comObject);
+        // console.log(`post owner: ${post.postedBy}`);
+        // console.log(`logged in client: ${userId}`);
 
         if ( userId.toString() === post.postedBy.toString() ) {
             const comments = post.replies;
@@ -200,7 +200,7 @@ const updateComment = async (req, res) => {
             post.save();
             const newComment = { userId, username, text, userProfilePicture };
             post.replies.push(newComment);
-            console.log('1');
+            // console.log('1');
             res.status(200).json({comment: newComment,  message: "Comment successfully updated."});
         } else {
             if (userId.toString() === comObject.userId.toString()) {
@@ -209,11 +209,11 @@ const updateComment = async (req, res) => {
                 post.save();
                 const newComment = { userId, username, text, userProfilePicture };
                 post.replies.push(newComment);
-                console.log('2');
+                // console.log('2');
                 res.status(200).json(newComment);
             } else {
                 res.status(401).json({message: "Unauthorized to update comment"})
-                console.log('3');
+                // console.log('3');
             }
         }
     } catch (err) {
@@ -238,27 +238,27 @@ const deleteComment = async (req, res) => {
                 comObject = commentOwner[i];
             }
         }
-        console.log("============")
-        console.log(comObject);
-        console.log(`post owner: ${post.postedBy}`);
-        console.log(`logged in client: ${userId}`);
+        // console.log("============")
+        // console.log(comObject);
+        // console.log(`post owner: ${post.postedBy}`);
+        // console.log(`logged in client: ${userId}`);
 
         if ( userId.toString() === post.postedBy.toString() ) {
             const comments = post.replies;
             comments.pull({_id: commentId})
             post.save();
             res.status(200).json({ comments: post.replies, message: "Comment successfully deleted" });
-            console.log('1');
+            // console.log('1');
         } else {
             if (userId.toString() === comObject.userId.toString()) {
                 const comments = post.replies;
                 comments.pull({_id: commentId})
                 post.save();
                 res.status(200).json({ comments: post.replies, message: "Your Comment successfully deleted" });
-                console.log('2');
+                // console.log('2');
             } else {
                 res.status(401).json({message: "Unauthorized to delete comment"})
-                console.log('3');
+                // console.log('3');
             }
         }
     } catch (err) {
