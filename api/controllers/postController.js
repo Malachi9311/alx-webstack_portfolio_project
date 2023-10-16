@@ -157,6 +157,19 @@ const comment = async (req, res) => {
         console.log(err);
     }
 };
+
+const getPostComments = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const post = await Post.findById(id);
+        if (!post) return res.status(404).json({ error: "POst does not exist."});
+        res.status(200).json(post.replies)
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+        console.log(err);
+    }
+};
+
 const updateComment = async (req, res) => {
     try {
         const { postId, commentId } = req.params;
@@ -188,6 +201,7 @@ const updateComment = async (req, res) => {
             const newComment = { userId, username, text, userProfilePicture };
             post.replies.push(newComment);
             console.log('1');
+            res.status(200).json({comment: newComment,  message: "Comment successfully updated."});
         } else {
             if (userId.toString() === comObject.userId.toString()) {
                 const comments = post.replies;
@@ -196,6 +210,7 @@ const updateComment = async (req, res) => {
                 const newComment = { userId, username, text, userProfilePicture };
                 post.replies.push(newComment);
                 console.log('2');
+                res.status(200).json(newComment);
             } else {
                 res.status(401).json({message: "Unauthorized to update comment"})
                 console.log('3');
@@ -232,14 +247,14 @@ const deleteComment = async (req, res) => {
             const comments = post.replies;
             comments.pull({_id: commentId})
             post.save();
-            res.status(200).json(post.replies)
+            res.status(200).json({ comments: post.replies, message: "Comment successfully deleted" });
             console.log('1');
         } else {
             if (userId.toString() === comObject.userId.toString()) {
                 const comments = post.replies;
                 comments.pull({_id: commentId})
                 post.save();
-                res.status(200).json(post.replies)
+                res.status(200).json({ comments: post.replies, message: "Your Comment successfully deleted" });
                 console.log('2');
             } else {
                 res.status(401).json({message: "Unauthorized to delete comment"})
@@ -253,4 +268,16 @@ const deleteComment = async (req, res) => {
 };
 
 
-module.exports = { createPost, feed, getPost, getUserPosts, updatePost, deletePost, likingToggle, comment, updateComment, deleteComment }
+module.exports = { 
+    createPost, 
+    feed, 
+    getPost, 
+    getUserPosts, 
+    updatePost, 
+    deletePost, 
+    likingToggle, 
+    comment, 
+    getPostComments, 
+    updateComment, 
+    deleteComment, 
+}

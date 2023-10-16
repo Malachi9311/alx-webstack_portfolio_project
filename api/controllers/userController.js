@@ -6,10 +6,14 @@ const mongoose = require('mongoose');
 const registerUser = async (req, res) => {
     try {
         const { name, username, email, password, profilePicture, bio } = req.body;
+        if ( !name || !username || !email || !password ) {
+            res.status(412).json({ message: "name, username, email & password fields cannot be empty!"})
+        };
         const user = await User.findOne({ email: email, username: username });
         if (user) {
             res.status(400).json({ error: "User already exists" });
         };
+        
 
         const salt = await bcrypt.genSalt(10);
         const hashedPWD = await bcrypt.hash(password,salt);

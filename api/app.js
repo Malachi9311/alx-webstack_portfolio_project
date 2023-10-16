@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
+const swaggerjsdoc = require('swagger-jsdoc');
+const swaggerui = require('swagger-ui-express')
 
 // connectDB
 const connectDB = require('./db/connect');
@@ -9,10 +10,31 @@ const connectDB = require('./db/connect');
 const userRouter = require('./routes/userRoutes');
 const postRouter = require('./routes/postRoutes');
 const authorize = require('./middleware/Authorize');
+// Documentation
+const options = {
+  definition:{
+    openapi: "3.0.0",
+    info: {
+      title: "Social Media API",
+      version: "1.0.0",
+      description: "This is an API for a social media platform",
+      contact: {
+        name: "Malachi",
+        email: "ntuthuko93dlamini@gmail.com",
+      },
+    },
+    servers: [
+      {url: 'http://localhost:3001/api/v1'}
+    ],
+    
+  },
+  apis: ["./routes/*.js"],
+};
+
+const swag = swaggerjsdoc(options);
+
 
 app.use(express.json());
-app.use(bodyParser.json({ limit: "10mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
 app.get('/', (req, res) => {
   res.send('Welcome to my social media app API')
@@ -21,6 +43,8 @@ app.get('/', (req, res) => {
 app.use('/api/v1/', userRouter);
 app.use('/api/v1/', authorize, postRouter);
 
+
+app.use('/docs', swaggerui.serve, swaggerui.setup(swag));
 
 // Spinning up Server and Database
 const port = process.env.PORT;
