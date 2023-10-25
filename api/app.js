@@ -2,8 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 // Middleware configuration
-const swaggerui = require('swagger-ui-express');
 const authorize = require('./middleware/Authorize');
+const swaggerui = require('swagger-ui-express');
 const swag = require('./utils/swaggerUI');
 // Connecting to the database
 const connectDB = require('./db/connect');
@@ -32,3 +32,18 @@ const start = async () => {
 };
 
 start();
+
+/*
+const path = require('path');
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/images')
+  },
+  filename: (req, file, cb) => {
+    console.log(file)
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
+*/
