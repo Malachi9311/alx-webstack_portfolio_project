@@ -2,7 +2,7 @@
 
 To use, add into .env file with:
 
-MONGO_URI,
+MONGO_URI,\n
 PORT,
 JWT_SECRET,
 JWT_LIFETIME
