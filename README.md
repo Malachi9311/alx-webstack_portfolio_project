@@ -14,7 +14,7 @@ post('/api/v1/logout');
 post('/api/v1/follow/:id');
 put('/api/v1/updateUserInfo');
 get('/api/v1/getUser/:query')
-======================
+
 # Post Endpoints
 post('/api/v1/create');
 get('/api/v1/getFeed')
